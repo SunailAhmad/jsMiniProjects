@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        .score {
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .attempts {
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .difficulty {
+            margin-top: 20px;
+        }
+
+        .difficulty button {
+            background-color: #007bff;
+        }
+
+        .reset-button {
+            background-color: #dc3545;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Number Guessing Game</h1>
+        <div class="difficulty">
+            <button onclick="setDifficulty('easy')">Easy (1-10)</button>
+            <button onclick="setDifficulty('medium')">Medium (1-50)</button>
+            <button onclick="setDifficulty('hard')">Hard (1-100)</button>
+        </div>
+        <input type="number" id="input_number" placeholder="Enter your guess" disabled>
+        <button id="submit_button" disabled>Submit</button>
+        <button class="reset-button" onclick="resetGame()">Reset</button>
+        <div class="message" id="message"></div>
+        <div class="attempts" id="attempts"></div>
+        <div class="score" id="score">Score: 0</div>
+    </div>
+
+    <audio id="correctSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+    <audio id="incorrectSound" src="https://www.soundjay.com/misc/sounds/fail-buzzer-01.mp3"></audio>
+
+    <script>
+        const input = document.querySelector('#input_number');
+        const submitButton = document.querySelector('#submit_button');
+        const message = document.querySelector('#message');
+        const attemptsDisplay = document.querySelector('#attempts');
+        const scoreDisplay = document.querySelector('#score');
+        const correctSound = document.querySelector('#correctSound');
+        const incorrectSound = document.querySelector('#incorrectSound');
+
+        let winningNumber;
+        let attempts = 3;
+        let score = 0;
+        let maxNumber = 10;
+
+        function setDifficulty(difficulty) {
+            if (difficulty === 'easy') {
+                maxNumber = 10;
+            } else if (difficulty === 'medium') {
+                maxNumber = 50;
+            } else if (difficulty === 'hard') {
+                maxNumber = 100;
+            }
+            resetGame();
+            input.disabled = false;
+            submitButton.disabled = false;
+        }
+
+        function generateWinningNumber() {
+            winningNumber = Math.floor(Math.random() * maxNumber) + 1;
+        }
+
+        function resetGame() {
+            generateWinningNumber();
+            attempts = 3;
+            updateAttemptsDisplay();
+            input.value = '';
+            message.textContent = '';
+            message.classList.remove('shake');
+        }
+
+        function updateAttemptsDisplay() {
+            attemptsDisplay.textContent = `Attempts left: ${attempts}`;
+        }
+
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        submitButton.addEventListener('click', function () {
+            const userGuess = parseInt(input.value);
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > maxNumber) {
+                message.textContent = `Please enter a valid number between 1 and ${maxNumber}!`;
+                message.classList.add('shake');
+                return;
+            }
+
+            attempts--;
+            updateAttemptsDisplay();
+
+            if (userGuess === winningNumber) {
+                message.textContent = `🎉 Correct! The number was ${winningNumber}.`;
+                message.style.color = 'green';
+                correctSound.play();
+                score++;
+                updateScoreDisplay();
+                resetGame();
+            } else if (attempts === 0) {
+                message.textContent = `😢 Game over! The number was ${winningNumber}.`;
+                message.style.color = 'red';
+                incorrectSound.play();
+                resetGame();
+            } else {
+                message.textContent = userGuess < winningNumber ? 'Guess higher!' : 'Guess lower!';
+                message.style.color = 'orange';
+                message.classList.add('shake');
+                incorrectSound.play();
+            }
+        });
+
+        // Initialize game
+        generateWinningNumber();
+        updateAttemptsDisplay();
+        updateScoreDisplay();
+    </script>
+</body>
+
+</html>
