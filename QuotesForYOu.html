@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuotesForYou</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: gray;
+            color: white;
+            min-height: 100vh;
+        }
+        .inner-container {
+            background-color: lightblue;
+            margin: 50px auto;
+            border: 2px solid black;
+            height: 500px;
+            width: 500px;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto; /* Enable scrolling for quotes */
+        }
+        .inner-container h2 {
+            text-align: center;
+            color: black;
+            border-bottom: 2px solid white;
+        }
+        #getQuoteBtn {
+            padding: 10px 40px;
+            margin: 10px 153px;
+            background-color: rgb(52, 52, 94);
+            border-radius: 10px;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        #clearAllBtn {
+            padding: 10px 40px;
+            margin: 10px 153px;
+            background-color: rgb(94, 52, 52);
+            border-radius: 10px;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .quotesList {
+            margin-top: 20px;
+        }
+        .quote {
+            background-color: gray;
+            border: 1px solid black;
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="inner-container">
+            <h2>Random Quotes Provider</h2>
+            
+            <div class="quotesList"></div>
+            <div class="GeTQuote">
+                <button id="getQuoteBtn">Get Your Quote</button>
+                <button id="clearAllBtn" style="display: none;">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+
+
+        const quotearr = [
+            "The greatest glory in living lies not in never falling, but in rising every time we fall. – Nelson Mandela",
+            "The way to get started is to quit talking and begin doing. – Walt Disney",
+            "Your time is limited, don't waste it living someone else's life. – Steve Jobs",
+            "If life were predictable it would cease to be life, and be without flavor. – Eleanor Roosevelt",
+            "If you look at what you have in life, you'll always have more. – Oprah Winfrey",
+            "If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success. – James Cameron",
+            "Life is what happens when you're busy making other plans. – John Lennon",
+            "Spread love everywhere you go. Let no one ever come to you without leaving happier. – Mother Teresa",
+            "When you reach the end of your rope, tie a knot in it and hang on. – Franklin D. Roosevelt",
+            "Don't judge each day by the harvest you reap but by the seeds that you plant. – Robert Louis Stevenson"
+        ];
+
+        const findQuote = document.querySelector('#getQuoteBtn');
+        const clearAllBtn = document.querySelector('#clearAllBtn');
+        const quotesList = document.querySelector('.quotesList');
+
+        // Function to add a new quote
+        findQuote.addEventListener('click', function () {
+            // Create a new div for the quote
+            const quoteDiv = document.createElement('div');
+            quoteDiv.classList.add('quote'); // Add a class for styling
+
+            // Get a random quote
+            const randomQuote = quotearr[Math.floor(Math.random() * quotearr.length)];
+
+            // Add the quote to the div
+            quoteDiv.textContent = randomQuote;
+
+            // Append the new quote div to the quotesList
+            quotesList.appendChild(quoteDiv);
+
+            // Show the "Clear All" button if it's hidden
+            if (clearAllBtn.style.display === 'none') {
+                clearAllBtn.style.display = 'block';
+            }
+
+            // Scroll to the newly added quote
+            quoteDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Function to clear all quotes
+        clearAllBtn.addEventListener('click', function () {
+            quotesList.innerHTML = ''; // Clear all quotes
+            clearAllBtn.style.display = 'none'; // Hide the "Clear All" button
+    
+        });
+    </script>
+</body>
+</html>
