@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-size: 200% 200%;
+            animation: gradientAnimation 10s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cart {
+            width: 100%;
+            background-color: rgba(249, 249, 249, 0.9);
+            border: 1px solid rgba(221, 221, 221, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .cart h3 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .cart-items {
+            margin-top: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(238, 238, 238, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cart-item button:hover {
+            background-color: #ff1a1a;
+        }
+
+        .total {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .productList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .product {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(221, 221, 221, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .product h5 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .product p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .addtocartBtn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .addtocartBtn:hover {
+            background-color: #218838;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quantity-controls button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .quantity-controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .quantity-controls span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Floating Animation for Background */
+        .floating {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .floating.one {
+            top: 10%;
+            left: 10%;
+            width: 150px;
+            height: 150px;
+            animation-duration: 5s;
+        }
+
+        .floating.two {
+            top: 60%;
+            left: 70%;
+            width: 120px;
+            height: 120px;
+            animation-duration: 7s;
+        }
+
+        .floating.three {
+            top: 30%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            animation-duration: 4s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating one"></div>
+    <div class="floating two"></div>
+    <div class="floating three"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Cart Section -->
+        <div class="cart">
+            <h3>Shopping Cart</h3>
+            <div class="cart-items"></div>
+            <div class="total">Total: Rs. 0</div>
+        </div>
+
+        <!-- Product List -->
+        <div class="productList">
+            <div class="product">
+                <h5 class="productName">Laptop</h5>
+                <p class="productPrice">50000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h5 class="productName">Phone</h5>
+                <p class="productPrice">25000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h5 class="productName">Tablet</h5>
+                <p class="productPrice">30000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h5 class="productName">Headphones</h5>
+                <p class="productPrice">5000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h5 class="productName">Keyboard</h5>
+                <p class="productPrice">2000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h5 class="productName">Mouse</h5>
+                <p class="productPrice">1000</p>
+                <button class="addtocartBtn">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        const addToCartButtons = document.querySelectorAll('.addtocartBtn');
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const totalDisplay = document.querySelector('.total');
+
+        let totalAmount = 0;
+        let cartItems = [];
+
+        // Function to show a notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.classList.add('notification');
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Function to update the cart UI
+        function updateCartUI() {
+            cartItemsContainer.innerHTML = '';
+            cartItems.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <span>${item.name} - Rs. ${item.price} (Qty: ${item.quantity})</span>
+                    <div class="quantity-controls">
+                        <button onclick="decreaseQuantity(${index})">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="increaseQuantity(${index})">+</button>
+                    </div>
+                    <button onclick="removeItem(${index})">Remove</button>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            totalDisplay.textContent = `Total: Rs. ${totalAmount}`;
+        }
+
+        // Function to add an item to the cart
+        function addToCart(productName, price) {
+            const existingItem = cartItems.find(item => item.name === productName);
+            if (existingItem) {
+                existingItem.quantity += 1;
+                totalAmount += price;
+            } else {
+                cartItems.push({ name: productName, price: price, quantity: 1 });
+                totalAmount += price;
+            }
+            updateCartUI();
+            showNotification(`${productName} added to cart!`);
+        }
+
+        // Function to remove an item from the cart
+        function removeItem(index) {
+            const removedItem = cartItems.splice(index, 1)[0];
+            totalAmount -= removedItem.price * removedItem.quantity;
+            updateCartUI();
+            showNotification(`${removedItem.name} removed from cart!`);
+        }
+
+        // Function to increase item quantity
+        function increaseQuantity(index) {
+            cartItems[index].quantity += 1;
+            totalAmount += cartItems[index].price;
+            updateCartUI();
+        }
+
+        // Function to decrease item quantity
+        function decreaseQuantity(index) {
+            if (cartItems[index].quantity > 1) {
+                cartItems[index].quantity -= 1;
+                totalAmount -= cartItems[index].price;
+            } else {
+                removeItem(index);
+            }
+            updateCartUI();
+        }
+
+        // Add event listeners to "Add to Cart" buttons
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const product = this.parentElement;
+                const productName = product.querySelector('.productName').textContent;
+                const price = parseInt(product.querySelector('.productPrice').textContent);
+                addToCart(productName, price);
+            });
+        });
+    </script>
+</body>
+</html>
